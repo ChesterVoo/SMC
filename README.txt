@@ -1,4 +1,4 @@
-============WELCOME TO CHESTER'S GITHUB PAGE====================
+============================WELCOME TO CHESTER'S REPOSITORY================================
 
 
-This page is used for testing while studying in an institution. 
+This repository is only used for institutional purposes. 
