@@ -1,7 +1,12 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 import torch
 import numpy as np
 import nltk
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from sklearn.svm import SVC
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -10,8 +15,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import GridSearchCV
-from sklearn.svm import SVC
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
 
 # nltk.download('punkt')
@@ -64,7 +68,35 @@ print(f"Average Neutral Sentiment: {average_neutral:.4f}")
 print(f"Average Positive Sentiment: {average_positive:.4f}")
 print(f"Average Negative Sentiment: {average_negative:.4f}")
 
-# Initialize DistilBERT
+
+## Plotting for Distribution Sentiment Scores and Categories
+# Set the plot style
+sns.set(style="whitegrid")
+
+# 1. Distribution of sentiment scores (Positive, Neutral, Negative)
+plt.figure(figsize=(10, 6))
+sns.histplot(data['positive'], kde=True, color='green', label='Positive Sentiment', bins=30)
+sns.histplot(data['neutral'], kde=True, color='blue', label='Neutral Sentiment', bins=30)
+sns.histplot(data['negative'], kde=True, color='red', label='Negative Sentiment', bins=30)
+plt.title("Distribution of Sentiment Scores")
+plt.xlabel("Sentiment Score")
+plt.ylabel("Frequency")
+plt.legend()
+plt.show()
+
+data['sentiment_category'] = data['compound'].apply(
+    lambda x: 'positive' if x > 0.05 else ('negative' if x < -0.05 else 'neutral'))
+
+# 2. Distribution of Sentiment Categories (Positive, Neutral, Negative)
+plt.figure(figsize=(8, 6))
+sns.countplot(x='sentiment_category', data=data, palette='Set1')
+plt.title("Sentiment Category Distribution")
+plt.xlabel("Sentiment Category")
+plt.ylabel("Count")
+plt.show()
+
+
+#Initialize DistilBERT
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = DistilBertModel.from_pretrained("distilbert-base-uncased")
@@ -84,7 +116,37 @@ data['distilbert_embeddings'] = data['cleaned_text'].apply(lambda x: compute_dis
 # Display the updated dataframe
 print(data.head())
 
+
+##Perform dimensionality reduction using t-SNE for visualization
+tsne = TSNE(n_components=2, random_state=42)
+
+# Apply t-SNE to DistilBERT embeddings
+distilbert_embeddings = np.vstack(data['distilbert_embeddings'].values)  # Stack embeddings for t-SNE
+X_tsne = tsne.fit_transform(distilbert_embeddings)
+
+# Create a DataFrame with the reduced dimensions and sentiment labels
+visualization_df = pd.DataFrame(X_tsne, columns=['Dim1', 'Dim2'])
+visualization_df['sentiment_label'] = data['sentiment_category']
+
+# Set plot style
+sns.set(style="whitegrid")
+
+# Plot using seaborn scatterplot
+plt.figure(figsize=(10, 8))
+sns.scatterplot(data=visualization_df, x='Dim1', y='Dim2', hue='sentiment_label', palette='Set1', s=60, alpha=0.7)
+
+# Add plot titles and labels
+plt.title('DistilBERT Embedding Visualization by Sentiment', fontsize=16)
+plt.xlabel('Principal Component 1', fontsize=12)
+plt.ylabel('Principal Component 2', fontsize=12)
+plt.legend(title='Sentiment Label', loc='upper right')
+plt.tight_layout()
+plt.show()
+
+
 # Logistic Regression Classifier
+
+
 # Create sentiment labels based on compound scores
 def create_sentiment_label(compound_score):
     if compound_score > 0:
@@ -141,8 +203,25 @@ print("Classification Report:")
 print(classification_report(y_test, y_pred_lr))
 print(f"Accuracy: {accuracy_score(y_test, y_pred_lr):.4f}")
 
+# Compute confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred_lr)
+
+# Display the confusion matrix
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Plot confusion matrix as a heatmap
+plt.figure(figsize=(6, 5))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Negative', 'Neutral', 'Positive'], yticklabels=['Negative', 'Neutral', 'Positive'])
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.show()
+
 
 # SVM 
+
+
 # Create sentiment labels based on compound scores
 def create_sentiment_label(compound_score):
     if compound_score > 0:
@@ -196,3 +275,18 @@ y_pred = best_model.predict(X_test)
 print("Classification Report:")
 print(classification_report(y_test, y_pred))
 print(f"Accuracy: {accuracy_score(y_test, y_pred):.4f}")
+
+# Compute confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Display the confusion matrix
+print("Confusion Matrix:")
+print(conf_matrix)
+
+# Plot confusion matrix as a heatmap
+plt.figure(figsize=(6, 5))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Negative', 'Neutral', 'Positive'], yticklabels=['Negative', 'Neutral', 'Positive'])
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.show()
