@@ -1,0 +1,5 @@
+Although the results are fairly good just above 70%, the models could be improved further with more
+pre-processing steps to prepare the data for testing. Deep learning algorithms can be implemented 
+alongside machine learning algorithms to compare the performance between them. This research can 
+provide useful insights for US Airline Corporations by giving information about customer’s 
+sentiment to the respective airlines. 

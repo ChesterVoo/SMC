@@ -25,7 +25,7 @@ from sklearn.metrics import classification_report, accuracy_score, confusion_mat
 
 
 # Load the dataset
-data = pd.read_csv('https://raw.githubusercontent.com/ChesterVoo/SMC/refs/heads/main/dataset/airlineTweets.csv')
+data = pd.read_csv('https://raw.githubusercontent.com/ChesterVoo/SMC/refs/heads/main/assignment/dataset/airlineTweets.csv')
 
 # Initialize the lemmatizer
 lemmatizer = WordNetLemmatizer()
@@ -88,8 +88,12 @@ data['sentiment_category'] = data['compound'].apply(
     lambda x: 'positive' if x > 0.05 else ('negative' if x < -0.05 else 'neutral'))
 
 # 2. Distribution of Sentiment Categories (Positive, Neutral, Negative)
+# Custom color palette
+custom_palette = {'positive': 'green', 'neutral': 'blue', 'negative': 'red'}
+
+# Plot using seaborn countplot with the custom palette
 plt.figure(figsize=(8, 6))
-sns.countplot(x='sentiment_category', data=data, palette='Set1')
+sns.countplot(x='sentiment_category', data=data, palette=custom_palette)
 plt.title("Sentiment Category Distribution")
 plt.xlabel("Sentiment Category")
 plt.ylabel("Count")
@@ -131,9 +135,12 @@ visualization_df['sentiment_label'] = data['sentiment_category']
 # Set plot style
 sns.set(style="whitegrid")
 
-# Plot using seaborn scatterplot
+# Define a custom color palette
+custom_palette = {'negative': 'red', 'neutral': 'blue', 'positive': 'green'}
+
+# Plot using seaborn scatterplot with the custom palette
 plt.figure(figsize=(10, 8))
-sns.scatterplot(data=visualization_df, x='Dim1', y='Dim2', hue='sentiment_label', palette='Set1', s=60, alpha=0.7)
+sns.scatterplot(data=visualization_df, x='Dim1', y='Dim2', hue='sentiment_label', palette=custom_palette, s=60, alpha=0.7)
 
 # Add plot titles and labels
 plt.title('DistilBERT Embedding Visualization by Sentiment', fontsize=16)
