@@ -69,7 +69,7 @@ print(f"Average Positive Sentiment: {average_positive:.4f}")
 print(f"Average Negative Sentiment: {average_negative:.4f}")
 
 
-## Plotting for Distribution Sentiment Scores and Categories
+# Plotting for Distribution Sentiment Scores and Categories
 # Set the plot style
 sns.set(style="whitegrid")
 
@@ -96,7 +96,7 @@ plt.ylabel("Count")
 plt.show()
 
 
-#Initialize DistilBERT
+# Initialize DistilBERT
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = DistilBertModel.from_pretrained("distilbert-base-uncased")
@@ -117,7 +117,7 @@ data['distilbert_embeddings'] = data['cleaned_text'].apply(lambda x: compute_dis
 print(data.head())
 
 
-##Perform dimensionality reduction using t-SNE for visualization
+# Perform dimensionality reduction using t-SNE for visualization
 tsne = TSNE(n_components=2, random_state=42)
 
 # Apply t-SNE to DistilBERT embeddings
