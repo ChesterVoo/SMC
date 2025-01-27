@@ -154,7 +154,7 @@ plt.show()
 # Logistic Regression Classifier
 
 
-# Create sentiment labels based on compound scores
+# Create sentiment labels based on compound scores for classification task
 def create_sentiment_label(compound_score):
     if compound_score > 0:
         return 'positive'
@@ -229,7 +229,7 @@ plt.show()
 # SVM 
 
 
-# Create sentiment labels based on compound scores
+# Create sentiment labels based on compound scores for classification task
 def create_sentiment_label(compound_score):
     if compound_score > 0:
         return 'positive'
