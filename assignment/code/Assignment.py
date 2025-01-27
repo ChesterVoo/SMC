@@ -290,3 +290,11 @@ plt.title('Confusion Matrix')
 plt.xlabel('Predicted')
 plt.ylabel('True')
 plt.show()
+
+
+
+
+
+ #--------------FUTURE WORK--------------#
+#Additional pre-processing steps can be implemented to better prepare the data for testing.
+#Deep learning algorithms can be incorporated alongside machine learning algorithms to compare performance.
